@@ -1,3 +1,7 @@
 *.iml
 *.xml
 .idea/description.html
+out/
+database/
+.classpath
+.project
