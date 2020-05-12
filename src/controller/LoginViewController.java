@@ -5,7 +5,12 @@ import javafx.fxml.FXML;
 import javafx.event.*;
 
 public class LoginViewController {
-    @FXML private Button exitLoginbutton;
+    @FXML private Label loginErrorMessage;
     @FXML private TextField userNameTextField;
-    @FXML private Button loginButton;
+
+    @FXML private void loginMainView(ActionEvent actionEvent) {
+    }
+
+    @FXML private void exitSystem(ActionEvent actionEvent) {
+    }
 }

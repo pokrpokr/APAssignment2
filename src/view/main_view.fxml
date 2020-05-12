@@ -35,17 +35,17 @@
         <items>
             <HBox spacing="20.0">
                <children>
-                <Button fx:id="createEventButton" mnemonicParsing="false" text="New Event Post">
+                <Button mnemonicParsing="false" onAction="#createNewEvent" text="New Event Post">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="createSaleButton" mnemonicParsing="false" text="New Sale Post">
+                  <Button mnemonicParsing="false" onAction="#createNewSale" text="New Sale Post">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="createJobButton" mnemonicParsing="false" text="New Job Post">
+                  <Button mnemonicParsing="false" onAction="#createNewJob" text="New Job Post">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -102,7 +102,7 @@
                   <Insets left="15.0" />
                </HBox.margin>
             </Label>
-            <Button fx:id="logoutButton" mnemonicParsing="false" text="Logout">
+            <Button mnemonicParsing="false" onAction="#logoutMainView" text="Logout">
                <HBox.margin>
                   <Insets left="675.0" />
                </HBox.margin>
