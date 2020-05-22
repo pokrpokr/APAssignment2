@@ -94,7 +94,7 @@
                   <Insets bottom="5.0" top="5.0" />
                </HBox.margin>
             </Text>
-            <Label fx:id="currentUserName" text="Label">
+            <Label fx:id="currentUserName" prefHeight="27.0" prefWidth="687.0" text="Label">
                <padding>
                   <Insets bottom="5.0" top="5.0" />
                </padding>
@@ -102,9 +102,9 @@
                   <Insets left="15.0" />
                </HBox.margin>
             </Label>
-            <Button mnemonicParsing="false" onAction="#logoutMainView" text="Logout">
+            <Button mnemonicParsing="false" onAction="#logoutMainView" prefHeight="25.0" prefWidth="76.0" text="Logout">
                <HBox.margin>
-                  <Insets left="675.0" />
+                  <Insets right="14.0" />
                </HBox.margin>
             </Button>
          </children>

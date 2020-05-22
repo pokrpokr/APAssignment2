@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class MainGUI extends Application {
+    public static Stage stage;
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -19,6 +21,7 @@ public class MainGUI extends Application {
             Scene scene = new Scene(root, 480, 200);
             stage.setTitle("UniLink System");
             stage.setScene(scene);
+            this.stage = stage;
             stage.show();
         } catch (IOException e) {
             System.out.println("Failed to load fxml file");

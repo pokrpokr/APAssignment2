@@ -9,14 +9,15 @@
 
 <AnchorPane prefHeight="200.0" prefWidth="480.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginViewController">
    <children>
-      <Text layoutX="67.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome To Use UniLink System" AnchorPane.topAnchor="25.0">
+      <Text layoutX="67.0" layoutY="61.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Welcome To Use UniLink System" AnchorPane.topAnchor="15.0">
          <font>
             <Font size="24.0" />
          </font>
       </Text>
-      <TextField fx:id="userNameTextField" alignment="CENTER" layoutX="134.0" layoutY="90.0" prefHeight="32.0" prefWidth="212.0" promptText="Please Enter Username" AnchorPane.topAnchor="75.0" />
-      <Button layoutX="145.0" layoutY="140.0" mnemonicParsing="false" onAction="#loginMainView" prefHeight="25.0" prefWidth="94.0" text="Login" AnchorPane.bottomAnchor="45.0" AnchorPane.leftAnchor="145.0" />
-      <Button layoutX="240.0" layoutY="140.0" mnemonicParsing="false" onAction="#exitSystem" prefHeight="25.0" prefWidth="94.0" text="Exit" AnchorPane.bottomAnchor="45.0" AnchorPane.rightAnchor="145.0" />
-      <Label fx:id="loginErrorMessage" layoutX="225.0" layoutY="108.0" text="Label" />
+      <TextField fx:id="userNameTextField" alignment="CENTER" layoutX="134.0" layoutY="90.0" onAction="#loginMainView" prefHeight="32.0" prefWidth="212.0" promptText="Please Enter Username" AnchorPane.topAnchor="60.0" />
+      <Button layoutX="145.0" layoutY="115.0" mnemonicParsing="false" onAction="#loginMainView" prefHeight="25.0" prefWidth="94.0" text="Login" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="145.0" AnchorPane.rightAnchor="145.0" />
+      <Button layoutX="240.0" layoutY="140.0" mnemonicParsing="false" onAction="#exitSystem" prefHeight="25.0" prefWidth="95.0" text="Exit" AnchorPane.bottomAnchor="35.0" AnchorPane.rightAnchor="145.0" />
+      <Label fx:id="loginErrorMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="48.0" layoutY="95.0" text="Label" textAlignment="CENTER" AnchorPane.leftAnchor="48.0" AnchorPane.rightAnchor="52.0" />
+      <Button layoutX="144.0" layoutY="140.0" mnemonicParsing="false" onAction="#SignupUser" prefHeight="25.0" prefWidth="95.0" text="Signup" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="145.0" />
    </children>
 </AnchorPane>

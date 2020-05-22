@@ -1,8 +1,7 @@
 package database;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import Exceptions.ExistException;
+
+import java.sql.*;
 
 public class DB {
 	private Connection con = null;
@@ -20,23 +19,43 @@ public class DB {
 		}
 	}
 
-	public ResultSet search(String sql){
+	public ResultSet search(String sql) throws SQLException {
 		ResultSet resultSet = null;
-		try {
-			resultSet = stmt.executeQuery(sql);
-		} catch (SQLException se) {}
+		resultSet = stmt.executeQuery(sql);
+		this.close();
 		return  resultSet;
 	}
 
-	public long count(String tbName){
-		String sql = "SELECT COUNT(*) FROM " + tbName;
-		long count = 0;
-		try {
-			ResultSet resultSet = stmt.executeQuery(sql);
-			count = resultSet.getLong("total");
-		} catch (SQLException se) {
+	public ResultSet insert(String sql) throws ExistException, SQLException {
+		ResultSet resultSet = null;
+		try{
+			int result = stmt.executeUpdate(sql);
+			con.commit();
+			if (result == 0){
+				return null;
+			}
+			resultSet = stmt.executeQuery("CALL IDENTITY();");
+		} catch (SQLIntegrityConstraintViolationException une) {
+			throw new ExistException();
 		}
+		this.close();
+		return resultSet;
+	}
 
+	// For posts table
+	public int count(String tbName, String type) throws SQLException {
+		String sql;
+		if (type.isBlank()) {
+			sql = "SELECT COUNT(*) FROM " + tbName;
+		} else {
+			sql = "SELECT COUNT(*) FROM " + tbName + " WHERE type = '"+ type +"'";
+		}
+		int count = -1;
+		ResultSet resultSet = stmt.executeQuery(sql);
+		while(resultSet.next()){
+			count = resultSet.getInt(1);
+		}
+		this.close();
 		return count;
 	}
 

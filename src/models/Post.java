@@ -1,29 +1,54 @@
 package models;
 
+import database.DB;
+import javafx.geometry.Pos;
+
 import java.util.ArrayList;
 
 public abstract class Post {
-    private int id;
-    private int creatorId;
+    private long id;
+    private long creatorId;
     private String title;
     private String description;
     private String idStr;
     private String creatorName;
     private String status;
-    private ArrayList<Reply> replies;
+    private String imageUrl;
     private boolean isDeleted = false;
 
-    public Post(int user_id, String[] args) {
-        this.creatorId = user_id;
-        this.idStr = args[0];
-        this.title = args[1];
-        this.description = args[2];
-        this.creatorName = args[3];
-        this.status = "OPEN";
-        this.replies = new ArrayList<Reply>();
+    protected enum Type {Event, Sal, Job};
+
+    public Post(long user_id, String creatorName, String idStr, String title, String description, String imageUrl) {
+        this.creatorId   = user_id;
+        this.creatorName = creatorName;
+        this.idStr       = idStr;
+        this.title       = title;
+        this.description = description;
+        this.imageUrl    = imageUrl;
+        this.status      = "OPEN";
+    }
+    
+    //For data from database
+    public Post(long id, long user_id, boolean isDeleted, String[] args) {
+    	this.id          = id;
+        this.creatorId   = user_id;
+        this.creatorName = args[0];
+        this.idStr       = args[1];
+        this.title       = args[2];
+        this.description = args[3];
+        this.status      = args[4];
+        this.imageUrl    = args[5];
+        this.isDeleted   = isDeleted;
     }
 
     abstract public boolean handleReply(Reply reply);
+
+    static public ArrayList<Post> getPosts(){
+        ArrayList<Post> posts = new ArrayList<>();
+        DB db = new DB();
+        String sql = "SELECT * FROM posts WHERE isDeleted = 0";
+        return posts;
+    }
 
     public String getPostDetails(String currentUser) {
         String format = "%-20s%s";
@@ -47,26 +72,48 @@ public abstract class Post {
         return true;
     }
 
+    public long getPostID(){ return this.id; };
+
+    public void setPostID(long id){ this.id = id; }
+
     public String getPostName() {
         return this.idStr;
     }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    public String getDescription() { return this.description; }
+
+    public long getCreatorID() { return this.creatorId; }
 
     public String getCreatorName() {
         return this.creatorName;
     }
 
-    public ArrayList<Reply> getReplies() {
-        return this.replies;
-    }
+    public String getStatus() { return this.status; }
 
-    public boolean setReplies(Reply reply) {
-        try {
-            this.replies.add(reply);
-        } catch (Exception e) {
-            return false;
-        }
-        return true;
-    }
+    public String getImage() { return this.imageUrl; }
+
+//    public void setIsDeleted(int isDeleted) {
+//        if (isDeleted == 1){
+//            this.isDeleted = true;
+//        } else {
+//            this.isDeleted = false;
+//        }
+//    }
+
+
+
+//    public boolean setReplies(Reply reply) {
+//        try {
+//            this.replies.add(reply);
+//        } catch (Exception e) {
+//            return false;
+//        }
+//        return true;
+//    }
 
     public boolean isDeleted() {
         return this.isDeleted;
@@ -74,5 +121,21 @@ public abstract class Post {
 
     public boolean isClosed() {
         return this.status.equals("CLOSED");
+    }
+
+    static public boolean dbToClassTransDelValue(int isDeleted) {
+        if (isDeleted == 1){
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    static public int classToDBTransDelValue(boolean isDeleted) {
+        if (isDeleted) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 }
