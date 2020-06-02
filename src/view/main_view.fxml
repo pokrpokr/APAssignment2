@@ -109,6 +109,6 @@
             </Button>
          </children>
       </HBox>
-      <ListView layoutX="14.0" layoutY="117.0" prefHeight="475.0" prefWidth="828.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+      <ListView fx:id="postLists" layoutX="14.0" layoutY="117.0" prefHeight="475.0" prefWidth="828.0" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
    </children>
 </AnchorPane>

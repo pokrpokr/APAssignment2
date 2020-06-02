@@ -42,6 +42,17 @@ public class DB {
 		return resultSet;
 	}
 
+	public boolean update(String sql) throws SQLException {
+			int result = stmt.executeUpdate(sql);
+			con.commit();
+			this.close();
+			if (result <= 0){
+				return false;
+			} else {
+				return true;
+			}
+	}
+
 	// For posts table
 	public int count(String tbName, String type) throws SQLException {
 		String sql;

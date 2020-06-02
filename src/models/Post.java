@@ -3,6 +3,8 @@ package models;
 import database.DB;
 import javafx.geometry.Pos;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public abstract class Post {
@@ -16,7 +18,7 @@ public abstract class Post {
     private String imageUrl;
     private boolean isDeleted = false;
 
-    protected enum Type {Event, Sal, Job};
+    protected enum Type {Event, Sale, Job};
 
     public Post(long user_id, String creatorName, String idStr, String title, String description, String imageUrl) {
         this.creatorId   = user_id;
@@ -36,8 +38,8 @@ public abstract class Post {
         this.idStr       = args[1];
         this.title       = args[2];
         this.description = args[3];
-        this.status      = args[4];
-        this.imageUrl    = args[5];
+        this.imageUrl    = args[4];
+        this.status      = args[5];
         this.isDeleted   = isDeleted;
     }
 
@@ -47,6 +49,21 @@ public abstract class Post {
         ArrayList<Post> posts = new ArrayList<>();
         DB db = new DB();
         String sql = "SELECT * FROM posts WHERE isDeleted = 0";
+        try{
+            ResultSet results = db.search(sql);
+            while (results.next()){
+                String type = results.getString("type");
+                if (type.equals(Type.Event.toString())){
+                    posts.add(Event.constructEvent(results));
+                } else if (type.equals(Type.Sale.toString())) {
+                    posts.add(Sale.constructSale(results));
+                } else if (type.equals(Type.Job.toString())) {
+                    posts.add(Job.constructJob(results));
+                }
+            }
+        }catch (Exception e){
+            System.out.println(e.toString());
+        }
         return posts;
     }
 
@@ -61,36 +78,39 @@ public abstract class Post {
     }
 
     //Soft delete
-    public boolean deletePost() {
-        this.isDeleted = true;
-        return isDeleted;
+    public boolean deletePost() throws SQLException {
+        if (this.isDeleted) { return true; }
+        DB db = new DB();
+        String sql = "UPDATE posts SET isDeleted = "+ classToDBTransDelValue(this.isDeleted) + " WHERE id = "+ this.id;
+        return db.update(sql);
     }
 
     //Close post
-    public boolean closePost() {
-        this.status = "CLOSED";
-        return true;
+    public boolean closePost() throws SQLException {
+        if (this.status.equals("CLOSED")) { return true; }
+        DB db = new DB();
+        String sql = "UPDATE posts SET status = 'CLOSED' WHERE id = "+ this.id;
+        return db.update(sql);
+    }
+
+    public static boolean updatePost(String sql) throws SQLException {
+        DB db = new DB();
+        return db.update(sql);
     }
 
     public long getPostID(){ return this.id; };
 
     public void setPostID(long id){ this.id = id; }
 
-    public String getPostName() {
-        return this.idStr;
-    }
+    public String getPostName() { return this.idStr; }
 
-    public String getTitle() {
-        return this.title;
-    }
+    public String getTitle() { return this.title; }
 
     public String getDescription() { return this.description; }
 
     public long getCreatorID() { return this.creatorId; }
 
-    public String getCreatorName() {
-        return this.creatorName;
-    }
+    public String getCreatorName() { return this.creatorName; }
 
     public String getStatus() { return this.status; }
 

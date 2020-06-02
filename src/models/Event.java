@@ -32,7 +32,7 @@ public class Event extends Post {
 
 	public static String generateId() throws SQLException {
 		DB db = new DB();
-		int eventSize   = db.count("posts", "event");
+		int eventSize   = db.count("posts", Type.Event.toString());
 		int eventAmount = eventSize + 1;
 		String eAmount  = "";
 		if (eventAmount < 10) {
@@ -53,7 +53,7 @@ public class Event extends Post {
 		try{
 			ResultSet results = db.search(sql);
 			while (results.next()){
-				events.add(constructEvent(results));
+				events.add((Event) constructEvent(results));
 			}
 		}catch (Exception e){
 		}
@@ -68,7 +68,7 @@ public class Event extends Post {
 			while (results.next()){
 				if (dbToClassTransDelValue(results.getInt("isDeleted"))){
 				} else {
-					return constructEvent(results);
+					return (Event) constructEvent(results);
 				}
 			}
 		} catch (SQLException se) {
@@ -80,9 +80,9 @@ public class Event extends Post {
 	public Event createEvent(User currentUser) throws ExistException, SQLException {
 		DB db = new DB();
 		String sql = "INSERT INTO posts(idStr, title, description, imageUrl, status, creatorName, creatorId, venue, date, capacity, attCount, isDeleted, type) " +
-				"VALUES('"+ this.getPostName() +"', '"+ this.getTitle() +"', '"+ this.getDescription() +"', '"+ this.getImage() +"', '"+ this.getStatus() +"', '"+ this.getCreatorName() +"'," +
+				"VALUES('"+ this.getPostName() +"', '"+ this.getTitle() +"', '"+ this.getDescription() +"', '"+ this.getImage() +"', '"+ this.getStatus() +"', '"+ this.getCreatorName() +"', " +
 				"'"+ this.getCreatorID() +"','"+ this.getVenue() +"', '"+ this.getDate() +"', '"+ this.getCapacity() +"', '"+ this.getAttCount() +"'," +
-				"'"+ classToDBTransDelValue(this.isDeleted()) +"', '"+ Type.Event.toString() +"')";
+				classToDBTransDelValue(this.isDeleted()) +", '"+ Type.Event.toString() +"')";
 		try {
 			ResultSet results = db.insert(sql);
 			while(results.next()){
@@ -109,7 +109,7 @@ public class Event extends Post {
 
 	public int getAttCount() { return this.attCount; }
 
-	static private Event constructEvent(ResultSet results) throws SQLException {
+	static public Post constructEvent(ResultSet results) throws SQLException {
 		String[] params = {
 				results.getString("creatorName"),
 				results.getString("idStr"),
@@ -120,7 +120,7 @@ public class Event extends Post {
 				results.getString("venue"),
 				results.getString("date")
 		};
-		Event event = new Event(results.getLong("id"), results.getLong("creatorId"), dbToClassTransDelValue(results.getInt("isDeleted")),
+		Post event = new Event(results.getLong("id"), results.getLong("creatorId"), dbToClassTransDelValue(results.getInt("isDeleted")),
 				params, results.getInt("capacity"), results.getInt("attCount"));
 		return event;
 	}
