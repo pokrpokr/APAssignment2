@@ -1,16 +1,20 @@
 package controller;
 
+import Exceptions.DBSaveException;
+import Exceptions.ExistException;
+import Exceptions.ValidationException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.text.Text;
 import main.MainGUI;
 import models.Event;
 import models.Job;
@@ -19,6 +23,8 @@ import models.Sale;
 
 import java.awt.*;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.Optional;
 
 public class PostListCell extends ListCell<Post> {
     @FXML private ImageView imageView;
@@ -52,9 +58,9 @@ public class PostListCell extends ListCell<Post> {
             }
             String name = post.getPostName();
             postID.setText(name);
-            title.setText(post.getTitle());
+            title.setText("title:"+post.getTitle());
             description.setText(post.getDescription());
-            creatorId.setText(post.getCreatorName());
+            creatorId.setText("createdBy:"+post.getCreatorName());
             status.setText(post.getStatus());
             Image newImage = new Image(post.getImage());
             imageView.setImage(newImage);
@@ -62,32 +68,64 @@ public class PostListCell extends ListCell<Post> {
             if (name.indexOf("E") == 0) {
                 label1.setText(((Event) post).getVenue());
                 label2.setText(((Event) post).getDate());
-                label3.setText(String.valueOf(((Event) post).getCapacity()));
-                label4.setText(String.valueOf(((Event) post).getAttCount()));
+                label3.setText("capacity:"+String.valueOf(((Event) post).getCapacity()));
+                label4.setText("attCount:"+String.valueOf(((Event) post).getAttCount()));
                 createReply.setText("join");
                 anchorPane.setStyle("-fx-background-color: lightblue;");
             } else if (name.indexOf("S") == 0) {
-                label1.setText(String.valueOf(((Sale) post).getHighestOffer()));
-                label2.setText(String.valueOf(((Sale) post).getMinimumRaise()));
+                label1.setText("hPrice:"+String.valueOf(((Sale) post).getHighestOffer()));
+                label2.setText("mRaise:"+String.valueOf(((Sale) post).getMinimumRaise()));
                 label3.setText("");
                 label4.setText("");
                 anchorPane.setStyle("-fx-background-color: pink;");
             } else if (name.indexOf("J") == 0) {
-                label1.setText(String.valueOf(((Job) post).getProposedPrice()));
-                label2.setText(String.valueOf(((Job) post).getLowestOffer()));
+                label1.setText("pPrice:"+String.valueOf(((Job) post).getProposedPrice()));
+                label2.setText("lOffer:"+String.valueOf(((Job) post).getLowestOffer()));
                 label3.setText("");
                 label4.setText("");
-                anchorPane.setStyle("-fx-background-color: yellowgreen;");
+                anchorPane.setStyle("-fx-background-color: yellow;");
             }
             createReply.setOnAction((event)->{
                 try {
-                    FXMLLoader reply = new FXMLLoader(getClass().getResource("/view/create_reply.fxml"));
-                    Parent root = reply.load();
-                    CreateReplyController controller = reply.getController();
-                    controller.initialize(post, MainViewController.currentUser);
-                    Scene scene = new Scene(root, 486, 450);
-                    MainGUI.stage.setScene(scene);
-                } catch (IOException e) {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setHeaderText("");
+                    alert.initOwner(MainGUI.stage);
+                    TextInputDialog d = new TextInputDialog();
+                    d.setTitle("Creating Reply");
+                    d.setHeaderText("");
+                    d.initOwner(MainGUI.stage);
+                    d.setContentText("Enter Your Offer: ");
+                    if (post instanceof Event) {
+                        try {
+                            if(post.handleReply(1.0)){
+                                alert.setContentText("Join Successfully!");
+                            } else {
+                                alert.setContentText("Join Failed!");
+                            }
+                        } catch (DBSaveException e) {
+                            alert.setContentText(e.getMessage());
+                        }
+                        alert.show();
+                    } else {
+                        Optional<String> offer = d.showAndWait();
+                        if (offer.isPresent()){
+                            try {
+                                Double offerD = Double.valueOf(offer.get());
+                                if(post.handleReply(offerD)) {
+                                    alert.setContentText("Reply Successfully!");
+                                } else {
+                                    alert.setContentText("Reply Failed!");
+                                }
+                            } catch (ValidationException e) {
+                                alert.setContentText(e.toString());
+                            } catch (Exception ee) {
+                                alert.setContentText(ee.toString());
+                            }
+                            alert.show();
+                        }
+                    }
+                    backToMainView(null);
+                } catch (SQLException | ValidationException | ExistException | IOException e) {
                     e.printStackTrace();
                 }
             });
@@ -113,5 +151,14 @@ public class PostListCell extends ListCell<Post> {
             setText(null);
             setGraphic(anchorPane);
         }
+    }
+
+    @FXML private void backToMainView(Post post) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main_view.fxml"));
+        Parent root = loader.load();
+        MainViewController controller = loader.getController();
+        controller.initialize(controller.currentUser, null);
+        Scene scene = new Scene(root, 854, 600);
+        MainGUI.stage.setScene(scene);
     }
 }

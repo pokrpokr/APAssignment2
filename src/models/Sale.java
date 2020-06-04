@@ -1,6 +1,9 @@
 package models;
 
+import Exceptions.DBSaveException;
 import Exceptions.ExistException;
+import Exceptions.ValidationException;
+import controller.MainViewController;
 import database.DB;
 
 import java.sql.ResultSet;
@@ -59,12 +62,31 @@ public class Sale extends Post {
 	}
 
 	@Override
-	public boolean handleReply(Reply reply) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean handleReply(double offer) throws SQLException, ValidationException, ExistException, DBSaveException {
+		if (offer < (this.highestOffer + this.minimumRaise)) {
+			throw new ValidationException("Minimum raise is $" + this.minimumRaise + "!");
+		}
+		if (offer >= this.askingPrice) {
+			this.closePost();
+		}
+		this.setHighestOffer(offer);
+
+		MainViewController mC = new MainViewController();
+		Reply reply = new Reply(this.getPostID(), mC.currentUser.getId(), mC.currentUser.getUserName(), offer);
+		DB db = new DB();
+		if (reply.saveReply() != null){
+			String sql = "UPDATE posts SET highestOffer = " + this.getHighestOffer() + " WHERE id = " + this.getPostID();
+			if (db.update(sql)) {
+				return true;
+			} else {
+				throw new DBSaveException("Create Reply Failed");
+			}
+		} else {
+			throw new DBSaveException("Create Reply Failed");
+		}
 	}
 
-	static public Post constructSale(ResultSet results) throws SQLException {
+	static public Sale constructSale(ResultSet results) throws SQLException {
 		String[] params = {
 				results.getString("creatorName"),
 				results.getString("idStr"),
@@ -73,10 +95,12 @@ public class Sale extends Post {
 				results.getString("imageUrl"),
 				results.getString("status"),
 		};
-		Post sale = new Sale(results.getLong("id"), results.getLong("creatorId"), dbToClassTransDelValue(results.getInt("isDeleted")),
+		Sale sale = new Sale(results.getLong("id"), results.getLong("creatorId"), dbToClassTransDelValue(results.getInt("isDeleted")),
 				params, results.getDouble("askingPrice"), results.getDouble("highestOffer"), results.getDouble("minimumRaise"));
 		return sale;
 	}
+
+	public void setHighestOffer(double offer){ this.highestOffer = offer; }
 
 	public double getAskingPrice() { return this.askingPrice; }
 

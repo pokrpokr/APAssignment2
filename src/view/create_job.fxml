@@ -25,7 +25,7 @@
             <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <TextField fx:id="proposedPrice" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <TextField fx:id="proposedPriceField" GridPane.columnIndex="1" GridPane.rowIndex="1" />
             <Label text="proposed price" GridPane.rowIndex="1" />
             <Label text="title:" />
             <TextField fx:id="titleField" GridPane.columnIndex="1" />
@@ -35,7 +35,7 @@
       </GridPane>
       <MenuBar fx:id="MenuBar" layoutX="14.0" layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
       <Button layoutX="70.0" layoutY="210.0" mnemonicParsing="false" onAction="#UploadImage" text="Upload Image" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="70.0" />
-      <Button layoutX="350.0" layoutY="189.0" mnemonicParsing="false" onAction="#CreateJob" prefHeight="25.0" prefWidth="91.0" text="CreateEvent" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="70.0" />
+      <Button layoutX="350.0" layoutY="189.0" mnemonicParsing="false" onAction="#CreateJob" prefHeight="25.0" prefWidth="91.0" text="CreateJob" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="70.0" />
       <Label fx:id="ValidationMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="229.0" layoutY="189.0" text="Label" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
       <BorderPane layoutX="29.0" layoutY="35.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.leftAnchor="15.0" AnchorPane.topAnchor="30.0">
          <center>

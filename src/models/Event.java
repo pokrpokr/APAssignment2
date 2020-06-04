@@ -1,7 +1,9 @@
 package models;
 
 import Exceptions.AlreadyDeleteException;
+import Exceptions.DBSaveException;
 import Exceptions.ExistException;
+import controller.MainViewController;
 import database.DB;
 
 import java.sql.ResultSet;
@@ -53,28 +55,11 @@ public class Event extends Post {
 		try{
 			ResultSet results = db.search(sql);
 			while (results.next()){
-				events.add((Event) constructEvent(results));
+				events.add(constructEvent(results));
 			}
 		}catch (Exception e){
 		}
 		return events;
-	}
-
-	static public Event findEvent(String idStr) throws AlreadyDeleteException {
-		DB db = new DB();
-		String sql = "SELECT * FROM posts WHERE idStr ='"+ idStr +"'";
-		try{
-			ResultSet results = db.search(sql);
-			while (results.next()){
-				if (dbToClassTransDelValue(results.getInt("isDeleted"))){
-				} else {
-					return (Event) constructEvent(results);
-				}
-			}
-		} catch (SQLException se) {
-			return null;
-		}
-		throw new AlreadyDeleteException("Event is already deleted");
 	}
 	
 	public Event createEvent(User currentUser) throws ExistException, SQLException {
@@ -96,9 +81,36 @@ public class Event extends Post {
 	}
 
 	@Override
-	public boolean handleReply(Reply reply) {
+	public boolean handleReply(double offer) throws SQLException, ExistException, DBSaveException {
 		// TODO Auto-generated method stub
-		return false;
+		MainViewController mC = new MainViewController();
+		Reply reply = new Reply(this.getPostID(), mC.currentUser.getId(), mC.currentUser.getUserName(), offer);
+		DB db = new DB();
+		if (reply.saveReply() != null){
+			attCount++;
+			String sql = "UPDATE posts SET attCount = " + attCount + " WHERE id = " + this.getPostID();
+			if (db.update(sql)) {
+				return true;
+			} else {
+				reply.deleteReply();
+				throw new DBSaveException("Create Reply Failed");
+			}
+		} else {
+			throw new DBSaveException("Create Reply Failed");
+		}
+	}
+
+	@Override
+	public ArrayList<String> getReplies() throws SQLException {
+		ArrayList<String> replies = new ArrayList<>();
+		DB db = new DB();
+		String sql = "SELECT * FROM replies WHERE postId = " + this.getPostID();
+		ResultSet rs = db.search(sql);
+		while(rs.next()) {
+			String reply = "Attender: User name: " + rs.getString("creatorName");
+			replies.add(reply);
+		}
+		return replies;
 	}
 
 	public String getVenue() { return this.venue; }
@@ -109,7 +121,7 @@ public class Event extends Post {
 
 	public int getAttCount() { return this.attCount; }
 
-	static public Post constructEvent(ResultSet results) throws SQLException {
+	static public Event constructEvent(ResultSet results) throws SQLException {
 		String[] params = {
 				results.getString("creatorName"),
 				results.getString("idStr"),
@@ -120,7 +132,7 @@ public class Event extends Post {
 				results.getString("venue"),
 				results.getString("date")
 		};
-		Post event = new Event(results.getLong("id"), results.getLong("creatorId"), dbToClassTransDelValue(results.getInt("isDeleted")),
+		Event event = new Event(results.getLong("id"), results.getLong("creatorId"), dbToClassTransDelValue(results.getInt("isDeleted")),
 				params, results.getInt("capacity"), results.getInt("attCount"));
 		return event;
 	}

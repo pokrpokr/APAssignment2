@@ -1,11 +1,15 @@
 package models;
 
+import Exceptions.DBSaveException;
+import Exceptions.ExistException;
+import Exceptions.ValidationException;
 import database.DB;
 import javafx.geometry.Pos;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class Post {
     private long id;
@@ -43,12 +47,20 @@ public abstract class Post {
         this.isDeleted   = isDeleted;
     }
 
-    abstract public boolean handleReply(Reply reply);
+    abstract public boolean handleReply(double offer) throws SQLException, ValidationException, ExistException, DBSaveException;
 
-    static public ArrayList<Post> getPosts(){
+    static public ArrayList<Post> getPosts(HashMap<String,String> options){
+        String optionString = "";
+        for (String key :options.keySet()) {
+            if (key.equals("creatorId")){
+                optionString = " "+ optionString + key + "= " + Integer.valueOf(options.get(key)) + " and ";
+            } else {
+                optionString = " "+ optionString + key + "= '" + options.get(key) + "' and ";
+            }
+        }
         ArrayList<Post> posts = new ArrayList<>();
         DB db = new DB();
-        String sql = "SELECT * FROM posts WHERE isDeleted = 0";
+        String sql = "SELECT * FROM posts WHERE"+ optionString +" isDeleted = 0";
         try{
             ResultSet results = db.search(sql);
             while (results.next()){
@@ -67,21 +79,23 @@ public abstract class Post {
         return posts;
     }
 
-    public String getPostDetails(String currentUser) {
-        String format = "%-20s%s";
-        String information = String.format(format, "Id:", id) + "\n"
-                + String.format(format, "Title", title) + "\n"
-                + String.format(format, "Description:", description) + "\n"
-                + String.format(format, "Creator ID:", creatorId) + "\n"
-                + String.format(format, "Status:", status) + "\n";
-        return information;
-    }
+    public ArrayList<String> getReplies() throws SQLException {
+        ArrayList<String> replies = new ArrayList<>();
+        DB db = new DB();
+        String sql = "SELECT * FROM replies WHERE postId = " + this.getPostID();
+        ResultSet rs = db.search(sql);
+        while(rs.next()) {
+            String reply = "User name: " + rs.getString("creatorName") + "Offered price: $" + rs.getDouble("value");
+            replies.add(reply);
+        }
+        return replies;
+    };
 
     //Soft delete
     public boolean deletePost() throws SQLException {
         if (this.isDeleted) { return true; }
         DB db = new DB();
-        String sql = "UPDATE posts SET isDeleted = "+ classToDBTransDelValue(this.isDeleted) + " WHERE id = "+ this.id;
+        String sql = "UPDATE posts SET isDeleted = 1 WHERE id = "+ this.id;
         return db.update(sql);
     }
 
@@ -93,9 +107,31 @@ public abstract class Post {
         return db.update(sql);
     }
 
+    //set close
+    public  void setClose(){
+        this.status = "CLOSED";
+    }
+
     public static boolean updatePost(String sql) throws SQLException {
         DB db = new DB();
         return db.update(sql);
+    }
+
+    static public ArrayList<String> getStatusA(){
+        ArrayList<String> statusA = new ArrayList<>();
+        statusA.add("All");
+        statusA.add("OPEN");
+        statusA.add("CLOSED");
+        return statusA;
+    }
+
+    static public ArrayList<String> getTypes(){
+        ArrayList<String> types = new ArrayList<>();
+        types.add("All");
+        types.add(Type.Event.toString());
+        types.add(Type.Sale.toString());
+        types.add(Type.Job.toString());
+        return types;
     }
 
     public long getPostID(){ return this.id; };

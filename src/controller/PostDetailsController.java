@@ -1,6 +1,8 @@
 package controller;
 
 import Exceptions.ValidationException;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -19,6 +21,7 @@ import models.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
 public class PostDetailsController {
     @FXML private Label label2;
@@ -73,9 +76,31 @@ public class PostDetailsController {
             label4.setText("attendees:");
             label4Content.setText(String.valueOf(((Event) post).getAttCount()));
         } else if (post instanceof Sale) {
-
+            label1.setText("askingPrice:");
+            label1Field.setText(String.valueOf(((Sale) post).getAskingPrice()));
+            label2.setText("minimumRaise:");
+            label2Field.setText(String.valueOf(((Sale) post).getMinimumRaise()));
+            label3.setVisible(false);
+            label3Field.setVisible(false);
+            label4.setText("highestOffer:");
+            label4Content.setText(String.valueOf(((Sale) post).getHighestOffer()));
         } else if (post instanceof Job) {
+            label1.setText("proposedPrice:");
+            label1Field.setText(String.valueOf(((Job) post).getProposedPrice()));
+            label2.setVisible(false);
+            label2Field.setVisible(false);
+            label3.setVisible(false);
+            label3Field.setVisible(false);
+            label4.setText("lowestOffer:");
+            label4Content.setText(String.valueOf(((Job) post).getLowestOffer()));
+        }
 
+        try {
+            ObservableList<String> list = FXCollections.observableList((List<String>) post.getReplies());
+            replyDetails.setItems(list);
+        } catch (SQLException e) {
+            ValidationMessage.setWrapText(true);
+            ValidationMessage.setText(e.getMessage());
         }
     }
 
@@ -98,14 +123,10 @@ public class PostDetailsController {
         if (!title.equals(titleField.getText())) { title = titleField.getText(); }
         if (!description.equals(descriptionField.getText())) { description = titleField.getText(); }
         if (post instanceof Event) {
-            String date        = ((Event) post).getDate();
-            if (!date.equals(label3Field.getText())) { date = label3Field.getText(); }
-            String venue       = ((Event) post).getVenue();
-            if (!venue.equals(label2Field.getText())) { venue = label2Field.getText(); }
-            String capacity    = String.valueOf(((Event) post).getCapacity());
-            if (!capacity.equals(label1Field.getText())) { capacity = label1Field.getText(); }
-            String imageUrl    = post.getImage();
-            if (!imageUrl.equals(this.imageUrl)) { imageUrl = this.imageUrl; }
+            String date        = label3Field.getText();
+            String venue       = label2Field.getText();
+            String capacity    = label1Field.getText();
+            String imageUrl    = this.imageUrl;
             CreateEventController cE = new CreateEventController();
             try {
                 cE.validation(new String[]{title, description, venue, date, capacity, imageUrl});
@@ -121,9 +142,40 @@ public class PostDetailsController {
                 ValidationMessage.setText(e.getMessage());
             }
         } else if (post instanceof Sale) {
-
+            String askingPrice  = label1Field.getText();
+            String minimumRaise = label2Field.getText();
+            CreateSaleController cS = new CreateSaleController();
+            try {
+                cS.validation(new String[]{title, description, askingPrice, minimumRaise, imageUrl});
+                if (currentUser == null) { throw new ValidationException("user logged out!"); }
+                if (Double.valueOf(askingPrice) < ((Sale) post).getHighestOffer()) { post.setClose(); }
+                String sql = "UPDATE posts SET title = '"
+                        + title +"', description = '"+ description +"', askingPrice = "+ Double.valueOf(askingPrice) +", minimumRaise = "+ minimumRaise +", imageUrl = '"+ imageUrl +"',"
+                        + " status = '" + post.getStatus() + "'" + " WHERE id = " + post.getPostID();
+                if (Post.updatePost(sql)){
+                    backToMainView(post);
+                }
+            } catch (ValidationException | SQLException | IOException e) {
+                ValidationMessage.setWrapText(true);
+                ValidationMessage.setText(e.getMessage());
+            }
         } else if (post instanceof Job) {
-
+            String proposedPrice = label1Field.getText();
+            String lowestOffer = String.valueOf(((Job) post).getLowestOffer());
+            CreateJobController cJ = new CreateJobController();
+            try {
+                cJ.validation(new String[]{title, description, proposedPrice, imageUrl});
+                if (currentUser == null) { throw new ValidationException("user logged out!"); }
+                if (((Job) post).getProposedPrice() == ((Job) post).getLowestOffer()) { lowestOffer = proposedPrice; }
+                String sql = "UPDATE posts SET title = '"
+                        + title +"', description = '"+ description +"', proposedPrice = "+ Double.valueOf(proposedPrice) +", "+ "lowestOffer = "+ Double.valueOf(lowestOffer) +", imageUrl = '"+ imageUrl + "'"
+                        + " WHERE id = " + post.getPostID();
+                if (Post.updatePost(sql)){
+                    backToMainView(post);
+                }
+            } catch (ValidationException | IOException | SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
