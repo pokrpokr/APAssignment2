@@ -1,6 +1,8 @@
 package controller;
 
 import Exceptions.ExistException;
+import com.google.gson.Gson;
+import database.DB;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -11,7 +13,12 @@ import javafx.scene.paint.Color;
 import main.MainGUI;
 import models.User;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.HashMap;
 
 public class LoginViewController {
     @FXML private Label loginErrorMessage;
@@ -70,4 +77,36 @@ public class LoginViewController {
             e.printStackTrace();
         }
     };
+
+    public void importUsers(ActionEvent actionEvent) {
+        try{
+            BufferedReader uInput = new BufferedReader(new FileReader("./src/files/userOutput.txt"));
+            String uNext = uInput.readLine();
+            while(uNext != null) {
+                HashMap<String, Object> postU = new HashMap<>();
+                Gson gson = new Gson();
+                postU = gson.fromJson(uNext, postU.getClass());
+                DB db = new DB();
+                String sql = "INSERT INTO users(id, userName, password) VALUES(" + postU.get("id") + ",'" +
+                        postU.get("userName") + "','" + postU.get("password") + "'" + ")";
+                db.insert(sql);
+                uNext = uInput.readLine();
+            }
+            uInput.close();
+
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("");
+            alert.setHeaderText("");
+            alert.setContentText("Import Successfully!");
+            alert.initOwner(MainGUI.stage);
+            alert.show();
+        } catch (IOException | SQLException | ExistException e) {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Error!");
+            alert.setHeaderText("");
+            alert.setContentText(e.toString());
+            alert.initOwner(MainGUI.stage);
+            alert.show();
+        }
+    }
 }

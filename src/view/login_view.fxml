@@ -19,5 +19,6 @@
       <Button layoutX="240.0" layoutY="140.0" mnemonicParsing="false" onAction="#exitSystem" prefHeight="25.0" prefWidth="95.0" text="Exit" AnchorPane.bottomAnchor="35.0" AnchorPane.rightAnchor="145.0" />
       <Label fx:id="loginErrorMessage" alignment="CENTER" contentDisplay="CENTER" layoutX="48.0" layoutY="95.0" text="Label" textAlignment="CENTER" AnchorPane.leftAnchor="48.0" AnchorPane.rightAnchor="52.0" />
       <Button layoutX="144.0" layoutY="140.0" mnemonicParsing="false" onAction="#SignupUser" prefHeight="25.0" prefWidth="95.0" text="Signup" AnchorPane.bottomAnchor="35.0" AnchorPane.leftAnchor="145.0" />
+      <Button layoutX="146.0" layoutY="165.0" mnemonicParsing="false" onAction="#importUsers" prefHeight="17.0" prefWidth="190.0" text="ImportUser" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="145.0" AnchorPane.rightAnchor="145.0" />
    </children>
 </AnchorPane>

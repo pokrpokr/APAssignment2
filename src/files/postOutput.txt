@@ -1,0 +1,1 @@
+{"id":0,"description":"sale test","title":"sale","status":"OPEN","idStr":"SAL001","imageUrl":"file:/D:/Uni%20Course%20related/AP/APAssignment2/images/photo2.png","creatorId":0,"creatorName":"s1","isDeleted":0,"type":"Sale","askingPrice":123.0,"highestOffer":13.0,"minimumRaise":12.0}

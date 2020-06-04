@@ -22,7 +22,7 @@ public abstract class Post {
     private String imageUrl;
     private boolean isDeleted = false;
 
-    protected enum Type {Event, Sale, Job};
+    public enum Type {Event, Sale, Job};
 
     public Post(long user_id, String creatorName, String idStr, String title, String description, String imageUrl) {
         this.creatorId   = user_id;
@@ -151,25 +151,6 @@ public abstract class Post {
     public String getStatus() { return this.status; }
 
     public String getImage() { return this.imageUrl; }
-
-//    public void setIsDeleted(int isDeleted) {
-//        if (isDeleted == 1){
-//            this.isDeleted = true;
-//        } else {
-//            this.isDeleted = false;
-//        }
-//    }
-
-
-
-//    public boolean setReplies(Reply reply) {
-//        try {
-//            this.replies.add(reply);
-//        } catch (Exception e) {
-//            return false;
-//        }
-//        return true;
-//    }
 
     public boolean isDeleted() {
         return this.isDeleted;

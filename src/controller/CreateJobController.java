@@ -59,7 +59,7 @@ public class CreateJobController {
 
     public void UploadImage(ActionEvent actionEvent) {
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(new File("D:/Uni Course related/AP/APAssignment2/images/"));
+        fileChooser.setInitialDirectory(new File("./images/"));
         File file = fileChooser.showOpenDialog(MainGUI.stage);
         if (file == null){
             ValidationMessage.setText("please upload image");
