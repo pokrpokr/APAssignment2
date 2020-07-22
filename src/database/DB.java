@@ -1,3 +1,7 @@
+/*
+  DB methods: search, insert, update, count(counting rows of tables), close(closing connection)
+ */
+
 package database;
 import Exceptions.ExistException;
 

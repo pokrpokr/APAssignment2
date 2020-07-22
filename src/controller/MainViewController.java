@@ -58,6 +58,7 @@ public class MainViewController {
         creatorList.setItems(FXCollections.observableList((List) creators));
         MainViewController.currentUser = currentUser;
         currentUserName.setText(currentUser.getUserName());
+        // init filter
         typeList.getSelectionModel().selectedItemProperty().addListener((ChangeListener<String>) (observableValue, str, t1) -> {
             if (t1.equals("All")) {
                 options.remove("type");
@@ -91,11 +92,13 @@ public class MainViewController {
             postLists.setItems(list);
             postLists.setCellFactory(postListView -> new PostListCell());
         });
+        // init list view
         List<Post> posts = Post.getPosts(options);
         ObservableList<Post> list = FXCollections.observableList(posts);
         postLists.setItems(list);
         postLists.setCellFactory(postListView -> new PostListCell());
 
+        //Show developer info
         devInfo.setOnAction((event)->{
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Developer Info");
@@ -116,7 +119,7 @@ public class MainViewController {
                 if (result.get() == ButtonType.OK) {System.exit(0);}
             }
         });
-
+        //Export data to file
         exportData.setOnAction((event)->{
             HashMap<String,String> exportOptions = new HashMap<>();
             Gson gson = new Gson();
@@ -221,6 +224,7 @@ public class MainViewController {
             }
         });
 
+        //Import data from file
         importData.setOnAction((event)->{
             try {
                 Gson gson = new Gson();

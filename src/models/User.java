@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class User {
     private long id;
     private String userName;
+    // TODO in the future, user can sign/log in with password
     private String password;
 
     static public ArrayList<User> getUsers(){
@@ -27,7 +28,7 @@ public class User {
 
         return users;
     }
-
+    // TODO check if user exist
     static public boolean isExist(String userName){
         DB db = new DB();
         String sql = "SELECT * FROM users where userName = '" + userName + "'";
@@ -87,6 +88,7 @@ public class User {
 
     protected void setUserName(String userName){ this.userName = userName; }
 
+    //TODO for letting user edit profile
     public boolean updateUserName(String newName) {
         this.userName = newName;
         if (userName.equals(newName)){

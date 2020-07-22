@@ -21,6 +21,7 @@ public class Job extends Post {
 		this.lowestOffer   = proposedPrice;
 	}
 
+	// read from database constructor
 	public Job(long id, long user_id, boolean isDeleted, String[] args, double proposedPrice, double lowestOffer) {
 		super(id, user_id, isDeleted, args);
 		this.proposedPrice = proposedPrice;

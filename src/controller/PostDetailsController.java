@@ -43,6 +43,7 @@ public class PostDetailsController {
     @FXML private User currentUser;
 
     @FXML public void initialize(Post post, User currentUser) {
+        String basePath = "./";
         ValidationMessage.setText("");
         ValidationMessage.setTextFill(Color.RED);
         this.currentUser = currentUser;
@@ -62,7 +63,7 @@ public class PostDetailsController {
         MenuBar.getMenus().add(backButton);
         this.post = post;
         this.imageUrl = post.getImage();
-        Image loadImage = new Image(this.imageUrl);
+        Image loadImage = new Image(new File(basePath).toURI().toString() + this.imageUrl);
         imageView.setImage(loadImage);
         titleField.setText(post.getTitle());
         descriptionField.setText(post.getDescription());
@@ -111,8 +112,9 @@ public class PostDetailsController {
         if (file == null && this.imageUrl.isBlank()){
             ValidationMessage.setText("please upload image");
         } else {
-            this.imageUrl = file.toURI().toString();
-            Image newImage = new Image(this.imageUrl);
+            String basePath = "./";
+            this.imageUrl = new File(basePath).toURI().relativize(file.toURI()).getPath();
+            Image newImage = new Image( new File(basePath).toURI().toString() + this.imageUrl);
             imageView.setImage(newImage);
         }
     }

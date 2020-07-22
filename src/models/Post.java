@@ -116,7 +116,7 @@ public abstract class Post {
         DB db = new DB();
         return db.update(sql);
     }
-
+    //set filter data
     static public ArrayList<String> getStatusA(){
         ArrayList<String> statusA = new ArrayList<>();
         statusA.add("All");
@@ -160,6 +160,7 @@ public abstract class Post {
         return this.status.equals("CLOSED");
     }
 
+    // convert int value to boolean for reading from database
     static public boolean dbToClassTransDelValue(int isDeleted) {
         if (isDeleted == 1){
             return true;
@@ -167,7 +168,7 @@ public abstract class Post {
             return false;
         }
     }
-
+    // convert boolean value to int for saving into database
     static public int classToDBTransDelValue(boolean isDeleted) {
         if (isDeleted) {
             return 1;

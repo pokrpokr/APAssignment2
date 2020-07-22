@@ -29,6 +29,7 @@ public class LoginViewController {
         loginErrorMessage.setTextFill(Color.RED);
     }
 
+    // If user account not in database , sign in it
     @FXML public void SignupUser(ActionEvent actionEvent) {
         String userName = userNameTextField.getText();
         if(userName.isEmpty()){
@@ -47,6 +48,7 @@ public class LoginViewController {
         }
     }
 
+    // Validate login input
     @FXML private void loginMainView(ActionEvent actionEvent) {
         String userName = userNameTextField.getText();
         if(userName.isEmpty()){
@@ -65,6 +67,7 @@ public class LoginViewController {
         System.exit(0);
     }
 
+    // Jump to MainView page
     @FXML private void logInMainView(User currentUser){
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/main_view.fxml"));
@@ -78,6 +81,7 @@ public class LoginViewController {
         }
     };
 
+    // Import users data into database from userOutput.txt
     public void importUsers(ActionEvent actionEvent) {
         try{
             BufferedReader uInput = new BufferedReader(new FileReader("./src/files/userOutput.txt"));

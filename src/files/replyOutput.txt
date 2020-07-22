@@ -1,1 +1,4 @@
-{"id":0,"postId":0,"creatorId":1,"creatorName":"s2","value":13.0}
+{"id":0,"postId":0,"creatorId":1,"creatorName":"s2","value":1.0}
+{"id":1,"postId":1,"creatorId":1,"creatorName":"s2","value":46.0}
+{"id":2,"postId":2,"creatorId":1,"creatorName":"s2","value":200.0}
+{"id":3,"postId":0,"creatorId":1,"creatorName":"s2","value":1.0}

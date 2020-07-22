@@ -23,7 +23,8 @@ public class Event extends Post {
 		this.date     = date;
 		this.capacity = capacity;
 	}
-	
+
+	// read from database constructor
 	public Event(long id, long user_id, boolean isDeleted, String[] args, int capacity, int attCount) {
 		super(id, user_id, isDeleted, args);
 		this.venue    = args[6];

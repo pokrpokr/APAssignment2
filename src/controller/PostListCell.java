@@ -22,6 +22,7 @@ import models.Post;
 import models.Sale;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Optional;
@@ -57,12 +58,13 @@ public class PostListCell extends ListCell<Post> {
                 e.printStackTrace();
             }
             String name = post.getPostName();
+            String basePath = "./";
             postID.setText(name);
             title.setText("title:"+post.getTitle());
             description.setText(post.getDescription());
             creatorId.setText("createdBy:"+post.getCreatorName());
             status.setText(post.getStatus());
-            Image newImage = new Image(post.getImage());
+            Image newImage = new Image(new File(basePath).toURI().toString() + post.getImage());
             imageView.setImage(newImage);
 
             if (name.indexOf("E") == 0) {
@@ -83,8 +85,9 @@ public class PostListCell extends ListCell<Post> {
                 label2.setText("lOffer:"+String.valueOf(((Job) post).getLowestOffer()));
                 label3.setText("");
                 label4.setText("");
-                anchorPane.setStyle("-fx-background-color: yellow;");
+                anchorPane.setStyle("-fx-background-color: grey;");
             }
+            // Valite input and create reply
             createReply.setOnAction((event)->{
                 try {
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION);

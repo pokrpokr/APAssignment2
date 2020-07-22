@@ -62,8 +62,9 @@ public class CreateEventController {
         if (file == null){
             ValidationMessage.setText("please upload image");
         } else {
-            this.imageUrl = file.toURI().toString();
-            Image newImage = new Image(this.imageUrl);
+            String basePath = "./";
+            this.imageUrl = new File(basePath).toURI().relativize(file.toURI()).getPath();
+            Image newImage = new Image( new File(basePath).toURI().toString() + this.imageUrl);
             imageView.setImage(newImage);
         }
     }
@@ -97,6 +98,7 @@ public class CreateEventController {
         }
     }
 
+    // Validate input string
     @FXML public void validation(String[] args) throws ValidationException {
         //For checking date format
         String regex = "^(?:(?:31(\\/|-|\\.)(?:0?[13578]|1[02]))\\1|(?:(?:29|30)(\\/|-|\\.)(?:0?[1,3-9]|1[0-2])\\2))(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$|^(?:29(\\/|-|\\.)(?:0?2|(?:Feb))\\3(?:(?:(?:1[6-9]|[2-9]\\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))$|^(?:0?[1-9]|1\\d|2[0-8])(\\/|-|\\.)(?:(?:0?[1-9])|(?:1[0-2]))\\4(?:(?:1[6-9]|[2-9]\\d)?\\d{2})$";

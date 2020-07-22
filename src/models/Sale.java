@@ -20,6 +20,7 @@ public class Sale extends Post {
 		this.minimumRaise = minimumRaise;
 	}
 
+	// read from database constructor
 	public Sale(long id, long user_id, boolean isDeleted, String[] args, double askingPrice, double highestOffer, double minimumRaise) {
 		super(id, user_id, isDeleted, args);
 		this.askingPrice = askingPrice;

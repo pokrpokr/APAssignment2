@@ -62,8 +62,9 @@ public class CreateSaleController {
         if (file == null){
             ValidationMessage.setText("please upload image");
         } else {
-            this.imageUrl = file.toURI().toString();
-            Image newImage = new Image(this.imageUrl);
+            String basePath = "./";
+            this.imageUrl = new File(basePath).toURI().relativize(file.toURI()).getPath();
+            Image newImage = new Image( new File(basePath).toURI().toString() + this.imageUrl);
             imageView.setImage(newImage);
         }
     }
@@ -105,8 +106,9 @@ public class CreateSaleController {
         MainGUI.stage.setScene(scene);
     }
 
+    // Validate input string
     @FXML public void validation(String[] args) throws ValidationException {
-//For checking date format
+    //For checking date format
         String message = "";
         // 0: title
         if (args[0].isBlank()) { message += "title, "; }
